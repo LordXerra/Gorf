@@ -61,6 +61,7 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
     private PlayState state = PlayState.MISSION_INTRO;
     private float stateTimer = 0;
     private float globalTime = 0;
+    private int lastEnemyProjectileCount = 0;
 
     public GameScreen(GorfGame game) {
         this.game = game;
@@ -145,6 +146,12 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
             return;
         }
 
+        // Debug: Numpad 0 skips to next mission
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_0) && state == PlayState.PLAYING) {
+            state = PlayState.MISSION_CLEAR;
+            stateTimer = 0;
+        }
+
         switch (state) {
             case MISSION_INTRO:
                 if (stateTimer >= 2.5f) {
@@ -216,6 +223,9 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
     private void updatePlaying(float delta) {
         entityManager.player.update(delta, game.inputManager);
 
+        // Track projectile count before mission update
+        int projCountBefore = entityManager.enemyProjectiles.size;
+
         // Update mission logic
         var mission = missionManager.getCurrentMission();
         if (mission != null) {
@@ -224,6 +234,11 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
 
         entityManager.updateAll(delta);
         particles.update(delta);
+
+        // Play enemy fire sound if new projectiles appeared
+        if (entityManager.enemyProjectiles.size > projCountBefore) {
+            game.sounds.play(SoundId.ENEMY_FIRE, 0.4f);
+        }
 
         // Collision detection
         boolean playerDied = collisionSystem.checkAll(entityManager, this);

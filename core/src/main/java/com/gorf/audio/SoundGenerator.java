@@ -52,6 +52,16 @@ public class SoundGenerator {
         generate(outputDir, "extra-life", extraLife());
         generate(outputDir, "startup", startup());
 
+        // Enemy fire
+        generate(outputDir, "enemy-fire", enemyFire());
+
+        // Ambient sounds for title screen
+        generate(outputDir, "ambient-blip", ambientBlip());
+        generate(outputDir, "ambient-warble", ambientWarble());
+        generate(outputDir, "ambient-zap", ambientZap());
+        generate(outputDir, "ambient-ping", ambientPing());
+        generate(outputDir, "ambient-sweep", ambientSweep());
+
         System.out.println("Generated all sound effects in " + outputDir);
     }
 
@@ -289,6 +299,98 @@ public class SoundGenerator {
     // Title intro sound
     private static short[] startup() {
         return arpeggio(new double[]{262, 330, 392, 523}, 0.15, 0.5);
+    }
+
+    // Short downward pew sound for enemy bullets
+    private static short[] enemyFire() {
+        int samples = (int)(SAMPLE_RATE * 0.06);
+        short[] data = new short[samples];
+        for (int i = 0; i < samples; i++) {
+            double t = (double) i / SAMPLE_RATE;
+            double progress = (double) i / samples;
+            double freq = 600 * (1.0 - progress * 0.5);
+            double envelope = 1.0 - progress;
+            data[i] = (short)(envelope * Short.MAX_VALUE * 0.3
+                * Math.sin(2 * Math.PI * freq * t));
+        }
+        return data;
+    }
+
+    // Short electronic blip
+    private static short[] ambientBlip() {
+        int samples = (int)(SAMPLE_RATE * 0.05);
+        short[] data = new short[samples];
+        for (int i = 0; i < samples; i++) {
+            double t = (double) i / SAMPLE_RATE;
+            double progress = (double) i / samples;
+            double envelope = Math.exp(-progress * 10);
+            data[i] = (short)(envelope * Short.MAX_VALUE * 0.3
+                * Math.sin(2 * Math.PI * 1400 * t));
+        }
+        return data;
+    }
+
+    // Short FM warble
+    private static short[] ambientWarble() {
+        int samples = (int)(SAMPLE_RATE * 0.12);
+        short[] data = new short[samples];
+        for (int i = 0; i < samples; i++) {
+            double t = (double) i / SAMPLE_RATE;
+            double progress = (double) i / samples;
+            double modFreq = 20;
+            double carrier = 800 + 400 * Math.sin(2 * Math.PI * modFreq * t);
+            double envelope = Math.exp(-progress * 6);
+            data[i] = (short)(envelope * Short.MAX_VALUE * 0.25
+                * Math.sin(2 * Math.PI * carrier * t));
+        }
+        return data;
+    }
+
+    // Quick electric zap
+    private static short[] ambientZap() {
+        int samples = (int)(SAMPLE_RATE * 0.08);
+        short[] data = new short[samples];
+        for (int i = 0; i < samples; i++) {
+            double t = (double) i / SAMPLE_RATE;
+            double progress = (double) i / samples;
+            double freq = 2000 * (1.0 - progress * 0.8);
+            double envelope = Math.exp(-progress * 8);
+            double noise = (Math.random() * 2 - 1) * 0.15;
+            data[i] = (short)(envelope * Short.MAX_VALUE * 0.25
+                * (Math.sin(2 * Math.PI * freq * t) * 0.8 + noise));
+        }
+        return data;
+    }
+
+    // High-pitched ping
+    private static short[] ambientPing() {
+        int samples = (int)(SAMPLE_RATE * 0.15);
+        short[] data = new short[samples];
+        for (int i = 0; i < samples; i++) {
+            double t = (double) i / SAMPLE_RATE;
+            double progress = (double) i / samples;
+            double envelope = Math.exp(-progress * 5);
+            data[i] = (short)(envelope * Short.MAX_VALUE * 0.2
+                * (Math.sin(2 * Math.PI * 2200 * t) * 0.7
+                 + Math.sin(2 * Math.PI * 3300 * t) * 0.3));
+        }
+        return data;
+    }
+
+    // Rising frequency sweep
+    private static short[] ambientSweep() {
+        int samples = (int)(SAMPLE_RATE * 0.2);
+        short[] data = new short[samples];
+        for (int i = 0; i < samples; i++) {
+            double t = (double) i / SAMPLE_RATE;
+            double progress = (double) i / samples;
+            double freq = 400 + 1200 * progress;
+            double envelope = progress < 0.1 ? progress / 0.1
+                            : (progress > 0.7 ? (1.0 - progress) / 0.3 : 1.0);
+            data[i] = (short)(envelope * Short.MAX_VALUE * 0.2
+                * Math.sin(2 * Math.PI * freq * t));
+        }
+        return data;
     }
 
     private static short[] arpeggio(double[] notes, double noteLen, double amp) {

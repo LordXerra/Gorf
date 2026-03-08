@@ -37,7 +37,7 @@ public class HighScoreTable {
 
     private void createDefaults() {
         entries.clear();
-        String[] names = {"GOR", "ZAP", "ACE", "MAX", "JET", "RAD", "VIC", "TOP", "WIN", "ZEN"};
+        String[] names = {"TJB", "AKT", "TML", "AJB", "NST", "LIL", "JAK", "FLO", "DOM", "BEN"};
         int baseScore = 10000;
         for (int i = 0; i < MAX_ENTRIES; i++) {
             entries.add(new HighScoreEntry(names[i], baseScore - i * 1000));

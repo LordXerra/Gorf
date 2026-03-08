@@ -92,7 +92,7 @@ public class HighScoreEntryScreen extends ScreenAdapter {
 
         // Instructions
         game.font.setColor(0.6f, 0.6f, 0.6f, 1f);
-        String hint = "UP/DOWN TO CHANGE   LEFT/RIGHT TO MOVE   START TO CONFIRM";
+        String hint = "UP/DOWN TO CHANGE   LEFT/RIGHT TO MOVE   FIRE TO CONFIRM";
         layout.setText(game.font, hint);
         game.font.draw(game.batch, hint, cx - layout.width / 2f, 150);
         game.font.setColor(Color.WHITE);
@@ -126,8 +126,8 @@ public class HighScoreEntryScreen extends ScreenAdapter {
             repeatTimer = REPEAT_DELAY;
         }
 
-        // Confirm
-        if (game.inputManager.isStartJustPressed()) {
+        // Confirm with start, fire, or space
+        if (game.inputManager.isStartJustPressed() || game.inputManager.isFireJustPressed()) {
             game.highScores.insert(new String(initials), score);
             game.setScreen(new TitleScreen(game));
         }

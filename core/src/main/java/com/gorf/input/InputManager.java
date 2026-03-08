@@ -88,10 +88,10 @@ public class InputManager implements ControllerListener {
         moveX = 0;
         moveY = 0;
 
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) moveX -= 1;
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) moveX += 1;
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) moveY += 1;
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) moveY -= 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) moveX -= 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) moveX += 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) moveY += 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) moveY -= 1;
 
         leftPressed = Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
         rightPressed = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);

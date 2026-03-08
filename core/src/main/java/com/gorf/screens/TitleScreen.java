@@ -9,9 +9,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.gorf.Constants;
 import com.gorf.GorfGame;
+import com.gorf.audio.SoundId;
 import com.gorf.graphics.LogoRenderer;
 import com.gorf.graphics.StarBackground;
 import com.gorf.graphics.StrobingText;
@@ -32,6 +34,13 @@ public class TitleScreen extends ScreenAdapter {
     private float phaseTimer;
     private float globalTime;
     private float blinkTimer;
+    private float ambientTimer;
+
+    private static final SoundId[] AMBIENT_SOUNDS = {
+        SoundId.AMBIENT_BLIP, SoundId.AMBIENT_WARBLE, SoundId.AMBIENT_ZAP,
+        SoundId.AMBIENT_PING, SoundId.AMBIENT_SWEEP,
+        SoundId.WARP_ENEMY, SoundId.INVADER_HIT, SoundId.SHIELD_HIT
+    };
 
     public TitleScreen(GorfGame game) {
         this.game = game;
@@ -50,8 +59,17 @@ public class TitleScreen extends ScreenAdapter {
         phaseTimer += delta;
         blinkTimer += delta;
 
-        // Update input
+        // Update input and sounds
         game.inputManager.update();
+        game.sounds.update(delta);
+
+        // Random ambient sounds
+        ambientTimer -= delta;
+        if (ambientTimer <= 0) {
+            ambientTimer = MathUtils.random(1.5f, 4.0f);
+            SoundId snd = AMBIENT_SOUNDS[MathUtils.random(AMBIENT_SOUNDS.length - 1)];
+            game.sounds.play(snd, 0.3f);
+        }
 
         // Cycle attract phases
         if (phaseTimer >= Constants.ATTRACT_PHASE_DURATION) {
@@ -200,8 +218,6 @@ public class TitleScreen extends ScreenAdapter {
         String[] credits = {
             "CODING BY TONY BRICE",
             "TECHNICAL SUPPORT BY AARON THORNE",
-            "ADDITIONAL CONTROLS AND GAME LOGIC",
-            "SUPPORT FROM CLAUDE",
             "TESTING BY TRIONA MELHUISH,",
             "AJ BRICE AND NAILESH SHETH"
         };

@@ -21,7 +21,13 @@ public enum SoundId {
     HIGH_SCORE("high-score"),
     RANK_UP("rank-up"),
     EXTRA_LIFE("extra-life"),
-    STARTUP("startup");
+    STARTUP("startup"),
+    ENEMY_FIRE("enemy-fire"),
+    AMBIENT_BLIP("ambient-blip"),
+    AMBIENT_WARBLE("ambient-warble"),
+    AMBIENT_ZAP("ambient-zap"),
+    AMBIENT_PING("ambient-ping"),
+    AMBIENT_SWEEP("ambient-sweep");
 
     public final String filename;
 
