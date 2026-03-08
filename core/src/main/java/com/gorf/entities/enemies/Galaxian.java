@@ -69,9 +69,9 @@ public class Galaxian extends Entity {
         }
         updateBoundsFromFrame();
 
-        this.diveCooldown = MathUtils.random(5f, 12f) / difficulty;
-        this.diveTimer = MathUtils.random(2f, diveCooldown);
-        this.diveSpeed = 0.4f * difficulty; // Bezier T speed
+        this.diveCooldown = MathUtils.random(8f, 16f) / difficulty;
+        this.diveTimer = MathUtils.random(3f, diveCooldown);
+        this.diveSpeed = 0.3f * difficulty; // Bezier T speed
     }
 
     private String getColorName() {

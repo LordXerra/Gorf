@@ -10,14 +10,16 @@ import com.gorf.graphics.SpriteManager;
  */
 public class ShieldSegment extends Entity {
     private float parentOffsetX;
+    private float parentOffsetY;
     private DebrisCallback debrisCallback;
 
     public interface DebrisCallback {
         void onDebris(float x, float y);
     }
 
-    public ShieldSegment(SpriteManager sprites, int segmentIndex, float offsetX) {
+    public ShieldSegment(SpriteManager sprites, int segmentIndex, float offsetX, float offsetY) {
         this.parentOffsetX = offsetX;
+        this.parentOffsetY = offsetY;
 
         String frameName = "shield_" + Math.min(segmentIndex + 1, 11);
         currentFrame = sprites.getFrame(frameName);
@@ -33,7 +35,7 @@ public class ShieldSegment extends Entity {
 
     public void updatePosition(float parentX, float parentY) {
         this.x = parentX + parentOffsetX;
-        this.y = parentY;
+        this.y = parentY + parentOffsetY;
     }
 
     @Override

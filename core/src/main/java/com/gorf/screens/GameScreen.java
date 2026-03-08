@@ -152,6 +152,11 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
             stateTimer = 0;
         }
 
+        // Debug: Numpad 1 toggles infinite lives
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_1)) {
+            scoreManager.toggleInfiniteLives();
+        }
+
         switch (state) {
             case MISSION_INTRO:
                 if (stateTimer >= 2.5f) {

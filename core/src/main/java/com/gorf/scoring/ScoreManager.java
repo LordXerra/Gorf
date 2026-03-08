@@ -9,6 +9,7 @@ public class ScoreManager {
     private int cycleCount;      // how many times we've completed all 5 missions
     private boolean extraLifeAwarded;
     private boolean extraLifeFlag;
+    private boolean infiniteLives;
 
     public ScoreManager() {
         score = 0;
@@ -24,7 +25,18 @@ public class ScoreManager {
     }
 
     public void onPlayerDeath() {
-        lives--;
+        if (!infiniteLives) {
+            lives--;
+        }
+    }
+
+    public void toggleInfiniteLives() {
+        infiniteLives = !infiniteLives;
+        if (infiniteLives) lives = 99;
+    }
+
+    public boolean hasInfiniteLives() {
+        return infiniteLives;
     }
 
     public void onMissionComplete() {

@@ -27,7 +27,8 @@ public enum SoundId {
     AMBIENT_WARBLE("ambient-warble"),
     AMBIENT_ZAP("ambient-zap"),
     AMBIENT_PING("ambient-ping"),
-    AMBIENT_SWEEP("ambient-sweep");
+    AMBIENT_SWEEP("ambient-sweep"),
+    TITLE_AMBIENT("title-ambient");
 
     public final String filename;
 

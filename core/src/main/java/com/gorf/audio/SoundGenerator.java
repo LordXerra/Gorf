@@ -62,6 +62,9 @@ public class SoundGenerator {
         generate(outputDir, "ambient-ping", ambientPing());
         generate(outputDir, "ambient-sweep", ambientSweep());
 
+        // Title screen continuous ambient drone loop
+        generate(outputDir, "title-ambient", titleAmbient());
+
         System.out.println("Generated all sound effects in " + outputDir);
     }
 
@@ -316,79 +319,199 @@ public class SoundGenerator {
         return data;
     }
 
-    // Short electronic blip
+    // Metallic grinding resonance - deep FM synthesis with inharmonic partials
     private static short[] ambientBlip() {
-        int samples = (int)(SAMPLE_RATE * 0.05);
+        int samples = (int)(SAMPLE_RATE * 0.8);
         short[] data = new short[samples];
         for (int i = 0; i < samples; i++) {
             double t = (double) i / SAMPLE_RATE;
             double progress = (double) i / samples;
-            double envelope = Math.exp(-progress * 10);
-            data[i] = (short)(envelope * Short.MAX_VALUE * 0.3
-                * Math.sin(2 * Math.PI * 1400 * t));
+            // Slow attack, long decay
+            double envelope = progress < 0.05 ? progress / 0.05
+                            : Math.exp(-(progress - 0.05) * 3);
+            // Metallic: inharmonic frequency ratios (bell-like)
+            double f1 = Math.sin(2 * Math.PI * 180 * t);
+            double f2 = Math.sin(2 * Math.PI * 293 * t) * 0.7; // non-integer ratio
+            double f3 = Math.sin(2 * Math.PI * 467 * t) * 0.4;
+            double f4 = Math.sin(2 * Math.PI * 587 * t) * 0.3;
+            // Ring modulation for metallic grinding
+            double ring = Math.sin(2 * Math.PI * 37 * t);
+            double tone = (f1 + f2 + f3 + f4) * (0.6 + 0.4 * ring);
+            data[i] = (short)(envelope * Short.MAX_VALUE * 0.5 * tone);
         }
         return data;
     }
 
-    // Short FM warble
+    // Deep space drone with slow FM modulation - eerie and spacey
     private static short[] ambientWarble() {
-        int samples = (int)(SAMPLE_RATE * 0.12);
+        int samples = (int)(SAMPLE_RATE * 1.2);
         short[] data = new short[samples];
         for (int i = 0; i < samples; i++) {
             double t = (double) i / SAMPLE_RATE;
             double progress = (double) i / samples;
-            double modFreq = 20;
-            double carrier = 800 + 400 * Math.sin(2 * Math.PI * modFreq * t);
-            double envelope = Math.exp(-progress * 6);
-            data[i] = (short)(envelope * Short.MAX_VALUE * 0.25
-                * Math.sin(2 * Math.PI * carrier * t));
+            // Swell envelope
+            double envelope = Math.sin(Math.PI * progress) * 0.9;
+            // Deep carrier with slow wobble
+            double modulator = Math.sin(2 * Math.PI * 3.5 * t) * 150;
+            double carrier = 90 + modulator + 40 * Math.sin(2 * Math.PI * 0.7 * t);
+            double tone = Math.sin(2 * Math.PI * carrier * t);
+            // Add sub-bass rumble
+            double sub = Math.sin(2 * Math.PI * 45 * t) * 0.3;
+            // Add high shimmer
+            double shimmer = Math.sin(2 * Math.PI * (carrier * 5.03) * t) * 0.15
+                           * Math.sin(2 * Math.PI * 2.1 * t);
+            data[i] = (short)(envelope * Short.MAX_VALUE * 0.5 * (tone * 0.6 + sub + shimmer));
         }
         return data;
     }
 
-    // Quick electric zap
+    // Industrial electric arc - harsh crackling with resonant filter sweep
     private static short[] ambientZap() {
-        int samples = (int)(SAMPLE_RATE * 0.08);
+        int samples = (int)(SAMPLE_RATE * 0.6);
         short[] data = new short[samples];
+        double phase = 0;
         for (int i = 0; i < samples; i++) {
             double t = (double) i / SAMPLE_RATE;
             double progress = (double) i / samples;
-            double freq = 2000 * (1.0 - progress * 0.8);
-            double envelope = Math.exp(-progress * 8);
-            double noise = (Math.random() * 2 - 1) * 0.15;
-            data[i] = (short)(envelope * Short.MAX_VALUE * 0.25
-                * (Math.sin(2 * Math.PI * freq * t) * 0.8 + noise));
+            // Sharp attack, medium decay
+            double envelope = progress < 0.02 ? progress / 0.02
+                            : Math.exp(-(progress - 0.02) * 4) * 0.8;
+            // Descending sawtooth with noise injection
+            double freq = 800 * (1.0 - progress * 0.6);
+            phase += freq / SAMPLE_RATE;
+            double sawtooth = 2.0 * (phase - Math.floor(phase + 0.5));
+            // Harsh noise bursts
+            double noise = (Math.random() * 2 - 1);
+            double crackle = noise * Math.abs(sawtooth) * 0.5;
+            // Resonant peak that sweeps down
+            double resFreq = 2000 * (1.0 - progress * 0.7);
+            double resonance = Math.sin(2 * Math.PI * resFreq * t) * 0.3;
+            data[i] = (short)(envelope * Short.MAX_VALUE * 0.55
+                * (sawtooth * 0.4 + crackle + resonance));
         }
         return data;
     }
 
-    // High-pitched ping
+    // Futuristic sonar ping with metallic reverb tail
     private static short[] ambientPing() {
-        int samples = (int)(SAMPLE_RATE * 0.15);
+        int samples = (int)(SAMPLE_RATE * 1.0);
         short[] data = new short[samples];
         for (int i = 0; i < samples; i++) {
             double t = (double) i / SAMPLE_RATE;
             double progress = (double) i / samples;
-            double envelope = Math.exp(-progress * 5);
-            data[i] = (short)(envelope * Short.MAX_VALUE * 0.2
-                * (Math.sin(2 * Math.PI * 2200 * t) * 0.7
-                 + Math.sin(2 * Math.PI * 3300 * t) * 0.3));
+            // Sharp attack, long metallic decay
+            double envelope = progress < 0.01 ? progress / 0.01
+                            : Math.exp(-progress * 2.5);
+            // Primary ping tone
+            double ping = Math.sin(2 * Math.PI * 1800 * t);
+            // Inharmonic metallic overtones (bell partials)
+            double metal1 = Math.sin(2 * Math.PI * 2897 * t) * 0.5 * Math.exp(-progress * 4);
+            double metal2 = Math.sin(2 * Math.PI * 4350 * t) * 0.3 * Math.exp(-progress * 6);
+            double metal3 = Math.sin(2 * Math.PI * 1123 * t) * 0.4 * Math.exp(-progress * 3);
+            // Subtle pitch bend down for spacey feel
+            double bend = Math.sin(2 * Math.PI * (1800 - 200 * progress) * t) * 0.2 * progress;
+            data[i] = (short)(envelope * Short.MAX_VALUE * 0.5
+                * (ping * 0.4 + metal1 + metal2 + metal3 + bend));
         }
         return data;
     }
 
-    // Rising frequency sweep
+    // Massive frequency sweep with grinding harmonics - spaceship flyby
     private static short[] ambientSweep() {
-        int samples = (int)(SAMPLE_RATE * 0.2);
+        int samples = (int)(SAMPLE_RATE * 1.5);
         short[] data = new short[samples];
+        double phase1 = 0, phase2 = 0;
         for (int i = 0; i < samples; i++) {
             double t = (double) i / SAMPLE_RATE;
             double progress = (double) i / samples;
-            double freq = 400 + 1200 * progress;
-            double envelope = progress < 0.1 ? progress / 0.1
-                            : (progress > 0.7 ? (1.0 - progress) / 0.3 : 1.0);
-            data[i] = (short)(envelope * Short.MAX_VALUE * 0.2
-                * Math.sin(2 * Math.PI * freq * t));
+            // Swell in and out
+            double envelope = Math.sin(Math.PI * progress);
+            // Rising sweep from deep bass to mid, then back down
+            double freq = 60 + 400 * Math.sin(Math.PI * progress);
+            phase1 += freq / SAMPLE_RATE;
+            phase2 += (freq * 2.01) / SAMPLE_RATE; // slightly detuned for thickness
+            // Sawtooth for grinding texture
+            double saw1 = 2.0 * (phase1 - Math.floor(phase1 + 0.5));
+            double saw2 = 2.0 * (phase2 - Math.floor(phase2 + 0.5));
+            // Filtered noise layer
+            double noise = (Math.random() * 2 - 1) * 0.15 * (0.5 + 0.5 * Math.sin(Math.PI * progress));
+            // Sub rumble
+            double sub = Math.sin(2 * Math.PI * 35 * t) * 0.3 * envelope;
+            data[i] = (short)(envelope * Short.MAX_VALUE * 0.5
+                * (saw1 * 0.35 + saw2 * 0.25 + noise + sub));
+        }
+        return data;
+    }
+
+    // 12-second metallic space drone loop for title screen
+    // Layers: sub-bass pulse, metallic sawtooth grind, FM space choir, high metallic shimmer
+    private static short[] titleAmbient() {
+        double duration = 12.0;
+        int samples = (int)(SAMPLE_RATE * duration);
+        short[] data = new short[samples];
+
+        // Phase accumulators for continuous waveforms
+        double phase1 = 0, phase2 = 0, phase3 = 0;
+
+        for (int i = 0; i < samples; i++) {
+            double t = (double) i / SAMPLE_RATE;
+            double progress = (double) i / samples;
+
+            // Crossfade envelope for seamless looping (fade first/last 0.5s)
+            double loopEnv = 1.0;
+            double fadeTime = 0.5;
+            double fadeFrac = fadeTime / duration;
+            if (progress < fadeFrac) loopEnv = progress / fadeFrac;
+            else if (progress > 1.0 - fadeFrac) loopEnv = (1.0 - progress) / fadeFrac;
+
+            // === Layer 1: Sub-bass pulse (slow throb) ===
+            double subFreq = 40 + 5 * Math.sin(2 * Math.PI * 0.15 * t);
+            double sub = Math.sin(2 * Math.PI * subFreq * t) * 0.25;
+            // Pulse the sub with a slow LFO
+            sub *= 0.7 + 0.3 * Math.sin(2 * Math.PI * 0.25 * t);
+
+            // === Layer 2: Metallic grinding sawtooth (detuned pair) ===
+            double grindFreq = 55 + 15 * Math.sin(2 * Math.PI * 0.08 * t);
+            phase1 += grindFreq / SAMPLE_RATE;
+            phase2 += (grindFreq * 2.003) / SAMPLE_RATE; // detuned octave
+            double saw1 = 2.0 * (phase1 - Math.floor(phase1 + 0.5));
+            double saw2 = 2.0 * (phase2 - Math.floor(phase2 + 0.5));
+            // Ring modulate for metallic quality
+            double ring = Math.sin(2 * Math.PI * 13.7 * t);
+            double grind = (saw1 * 0.5 + saw2 * 0.3) * (0.5 + 0.5 * ring);
+            // Slow volume swell
+            grind *= 0.3 * (0.6 + 0.4 * Math.sin(2 * Math.PI * 0.12 * t));
+
+            // === Layer 3: FM space choir (eerie mid-range pad) ===
+            double choirMod = Math.sin(2 * Math.PI * 1.3 * t) * 80;
+            double choirFreq = 220 + choirMod + 30 * Math.sin(2 * Math.PI * 0.07 * t);
+            double choir = Math.sin(2 * Math.PI * choirFreq * t);
+            // Add inharmonic partials for space texture
+            double partial1 = Math.sin(2 * Math.PI * (choirFreq * 1.498) * t) * 0.4;
+            double partial2 = Math.sin(2 * Math.PI * (choirFreq * 2.891) * t) * 0.2;
+            choir = (choir + partial1 + partial2) * 0.2;
+            // Slow breathing
+            choir *= 0.5 + 0.5 * Math.sin(2 * Math.PI * 0.1 * t + 1.0);
+
+            // === Layer 4: High metallic shimmer (bell-like resonance) ===
+            double shimFreq = 1800 + 400 * Math.sin(2 * Math.PI * 0.05 * t);
+            double shimmer = Math.sin(2 * Math.PI * shimFreq * t) * 0.08;
+            shimmer += Math.sin(2 * Math.PI * (shimFreq * 1.414) * t) * 0.05; // sqrt(2) ratio = bell
+            shimmer += Math.sin(2 * Math.PI * (shimFreq * 0.707) * t) * 0.04;
+            // Slow pulsing
+            shimmer *= 0.5 + 0.5 * Math.sin(2 * Math.PI * 0.18 * t + 2.0);
+
+            // === Layer 5: Noise hiss (filtered, slow) ===
+            double noise = (Math.random() * 2 - 1) * 0.04;
+            noise *= 0.4 + 0.6 * Math.sin(2 * Math.PI * 0.22 * t + 0.5);
+
+            // === Mix ===
+            double mix = sub + grind + choir + shimmer + noise;
+
+            // Soft clip to prevent harshness
+            mix = Math.tanh(mix * 1.2);
+
+            data[i] = (short)(loopEnv * Short.MAX_VALUE * 0.65 * mix);
         }
         return data;
     }

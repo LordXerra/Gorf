@@ -52,13 +52,14 @@ public class FlagShipMission extends Mission {
         });
         em.enemies.add(flagShip);
 
-        // Create shield segments (spread across the flagship width)
-        float shieldSpacing = 12f; // spacing in pixels (will be scaled)
-        float shieldStartOffset = -(NUM_SHIELDS / 2f) * shieldSpacing;
+        // Create shield segments as a barrier below the flagship
+        float shieldSpacing = 22f;
+        float shieldStartOffset = -(NUM_SHIELDS - 1) / 2f * shieldSpacing;
+        float shieldYOffset = -50f; // positioned below the flagship
 
         for (int i = 0; i < NUM_SHIELDS; i++) {
             float offset = shieldStartOffset + i * shieldSpacing;
-            shields[i] = new ShieldSegment(sprites, i, offset);
+            shields[i] = new ShieldSegment(sprites, i, offset, shieldYOffset);
             shields[i].setDebrisCallback((debX, debY) -> {
                 Debris debris = new Debris(sprites, debX, debY);
                 em.enemies.add(debris);
@@ -73,7 +74,7 @@ public class FlagShipMission extends Mission {
         em.enemies.add(reactorCore);
 
         // Create escort ships
-        leftEscort = new Escort(sprites, -120, -10, difficulty);
+        leftEscort = new Escort(sprites, -140, -30, difficulty);
         leftEscort.setFireCallback((fx, fy, tx, ty) -> {
             float dx = playerX - fx;
             float dy = playerY - fy;
@@ -87,7 +88,7 @@ public class FlagShipMission extends Mission {
         leftEscort.updatePosition(flagShip.x, flagShip.y, playerX, playerY);
         em.enemies.add(leftEscort);
 
-        rightEscort = new Escort(sprites, 120, -10, difficulty);
+        rightEscort = new Escort(sprites, 140, -30, difficulty);
         rightEscort.setFireCallback((fx, fy, tx, ty) -> {
             float dx = playerX - fx;
             float dy = playerY - fy;

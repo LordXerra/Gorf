@@ -17,8 +17,8 @@ import com.gorf.systems.EntityManager;
  * Enemies dive at player along Bezier curves.
  */
 public class GalaxiansMission extends Mission {
-    private static final int COLS = 6;
-    private static final int ROWS = 4;
+    private static final int COLS = 5;
+    private static final int ROWS = 3;
     private static final float COL_SPACING = 55f;
     private static final float ROW_SPACING = 40f;
 
@@ -51,20 +51,19 @@ public class GalaxiansMission extends Mission {
         float startX = Constants.VIRTUAL_WIDTH / 2f - (COLS - 1) * COL_SPACING / 2f;
         float topY = Constants.VIRTUAL_HEIGHT - 100;
 
-        // Row colors from top to bottom: flagship, red, blue, yellow
+        // Row colors from top to bottom: flagship, red, blue/yellow
         GalaxianColor[] rowColors = {
-            GalaxianColor.FLAGSHIP, GalaxianColor.RED,
-            GalaxianColor.BLUE, GalaxianColor.YELLOW
+            GalaxianColor.FLAGSHIP, GalaxianColor.RED, GalaxianColor.BLUE
         };
 
         for (int row = 0; row < ROWS; row++) {
             GalaxianColor color = rowColors[row];
-            // Top row (flagship) has fewer: only 2 in center
+            // Top row (flagship) has fewer: only 1 in center
             int colStart = 0;
             int colEnd = COLS;
             if (color == GalaxianColor.FLAGSHIP) {
                 colStart = 2;
-                colEnd = 4;
+                colEnd = 3;
             }
 
             for (int col = colStart; col < colEnd; col++) {
@@ -81,7 +80,7 @@ public class GalaxiansMission extends Mission {
                     float dy = ty - fy;
                     float dist = (float) Math.sqrt(dx * dx + dy * dy);
                     if (dist > 0) {
-                        float bSpeed = 200f * difficulty;
+                        float bSpeed = 140f * difficulty;
                         EnemyBullet bullet = new EnemyBullet(sprites, fx, fy,
                             (dx / dist) * bSpeed, (dy / dist) * bSpeed);
                         em.enemyProjectiles.add(bullet);

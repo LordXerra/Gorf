@@ -35,11 +35,11 @@ public class TitleScreen extends ScreenAdapter {
     private float globalTime;
     private float blinkTimer;
     private float ambientTimer;
+    private long ambientLoopId = -1;
 
-    private static final SoundId[] AMBIENT_SOUNDS = {
+    private static final SoundId[] AMBIENT_SFX = {
         SoundId.AMBIENT_BLIP, SoundId.AMBIENT_WARBLE, SoundId.AMBIENT_ZAP,
-        SoundId.AMBIENT_PING, SoundId.AMBIENT_SWEEP,
-        SoundId.WARP_ENEMY, SoundId.INVADER_HIT, SoundId.SHIELD_HIT
+        SoundId.AMBIENT_PING, SoundId.AMBIENT_SWEEP
     };
 
     public TitleScreen(GorfGame game) {
@@ -51,6 +51,9 @@ public class TitleScreen extends ScreenAdapter {
         this.layout = new GlyphLayout();
         this.smallFont = new BitmapFont();
         this.smallFont.getData().setScale(1.2f);
+
+        // Start continuous ambient drone loop
+        ambientLoopId = game.sounds.loop(SoundId.TITLE_AMBIENT, 0.7f);
     }
 
     @Override
@@ -63,12 +66,19 @@ public class TitleScreen extends ScreenAdapter {
         game.inputManager.update();
         game.sounds.update(delta);
 
-        // Random ambient sounds
+        // Occasional ambient SFX layered on top of the drone
         ambientTimer -= delta;
         if (ambientTimer <= 0) {
-            ambientTimer = MathUtils.random(1.5f, 4.0f);
-            SoundId snd = AMBIENT_SOUNDS[MathUtils.random(AMBIENT_SOUNDS.length - 1)];
-            game.sounds.play(snd, 0.3f);
+            ambientTimer = MathUtils.random(3.0f, 7.0f);
+            SoundId snd = AMBIENT_SFX[MathUtils.random(AMBIENT_SFX.length - 1)];
+            game.sounds.play(snd, 0.35f);
+        }
+
+        // Escape exits to desktop
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.sounds.stop(SoundId.TITLE_AMBIENT);
+            Gdx.app.exit();
+            return;
         }
 
         // Cycle attract phases
@@ -89,6 +99,7 @@ public class TitleScreen extends ScreenAdapter {
 
         // Start game
         if (game.inputManager.isStartJustPressed() || game.inputManager.isFireJustPressed()) {
+            game.sounds.stop(SoundId.TITLE_AMBIENT);
             game.setScreen(new GameScreen(game));
             return;
         }
@@ -216,7 +227,7 @@ public class TitleScreen extends ScreenAdapter {
         y -= 80;
         float lineH = 50;
         String[] credits = {
-            "CODING BY TONY BRICE",
+            "CREATED BY TONY BRICE",
             "TECHNICAL SUPPORT BY AARON THORNE",
             "TESTING BY TRIONA MELHUISH,",
             "AJ BRICE AND NAILESH SHETH"
@@ -246,6 +257,7 @@ public class TitleScreen extends ScreenAdapter {
 
     @Override
     public void dispose() {
+        game.sounds.stop(SoundId.TITLE_AMBIENT);
         stars.dispose();
         smallFont.dispose();
     }
