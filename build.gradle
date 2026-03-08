@@ -1,0 +1,67 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+allprojects {
+    version = '0.01'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+project(':core') {
+    apply plugin: 'java-library'
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    dependencies {
+        api "com.badlogicgames.gdx:gdx:1.13.1"
+        api "com.badlogicgames.gdx-controllers:gdx-controllers-core:2.2.4"
+    }
+}
+
+project(':desktop') {
+    apply plugin: 'java'
+    apply plugin: 'application'
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    application {
+        mainClass = 'com.gorf.desktop.DesktopLauncher'
+    }
+
+    run {
+        workingDir = rootProject.file('assets')
+        if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
+            jvmArgs += '-XstartOnFirstThread'
+        }
+    }
+
+    dependencies {
+        implementation project(':core')
+        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.13.1"
+        implementation "com.badlogicgames.gdx:gdx-platform:1.13.1:natives-desktop"
+        implementation "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:2.2.4"
+    }
+
+    tasks.register('dist', Jar) {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        dependsOn configurations.runtimeClasspath
+        from files(sourceSets.main.output.classesDirs)
+        from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+        from(rootProject.file('assets')) { exclude 'highscores.json' }
+        archiveClassifier = 'all'
+        manifest {
+            attributes 'Main-Class': application.mainClass
+        }
+    }
+}
