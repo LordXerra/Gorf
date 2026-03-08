@@ -13,6 +13,10 @@ import com.gorf.Constants;
 import com.gorf.GorfGame;
 import com.gorf.audio.SoundId;
 import com.gorf.entities.Entity;
+import com.gorf.entities.enemies.GorfianRobot;
+import com.gorf.entities.enemies.Invader;
+import com.gorf.entities.enemies.UFO;
+import com.gorf.missions.AstroBattlesMission;
 import com.gorf.graphics.HudRenderer;
 import com.gorf.graphics.StarBackground;
 import com.gorf.graphics.StrobingText;
@@ -59,10 +63,9 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
         overlayFont = new BitmapFont();
         overlayFont.getData().setScale(2.0f);
 
-        // TODO: Register missions as they are implemented in Phases 3-7
-        // missionManager.setMission(0, new AstroBattlesMission());
-        // missionManager.setMission(1, new LaserAttackMission());
-        // etc.
+        // Register missions
+        missionManager.setMission(0, new AstroBattlesMission());
+        // Missions 1-4 will be added in Phases 4-7
 
         game.sounds.playPriority(SoundId.GAME_START);
         startMission();
@@ -221,9 +224,26 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
 
     @Override
     public void onEnemyKilled(Entity enemy, float x, float y, int score) {
-        particles.spawnEnemyExplosion(x, y);
-        scoreManager.addScore(score > 0 ? score : Constants.SCORE_INVADER);
-        game.sounds.play(SoundId.ENEMY_DEATH);
+        // Determine score and explosion type based on enemy class
+        int points = score;
+        if (enemy instanceof Invader inv) {
+            points = inv.getScoreValue();
+            particles.spawnInvaderExplosion(x, y);
+            game.sounds.play(SoundId.INVADER_HIT);
+        } else if (enemy instanceof GorfianRobot gr) {
+            points = gr.getScoreValue();
+            particles.spawnEnemyExplosion(x, y);
+            game.sounds.play(SoundId.ENEMY_DEATH);
+        } else if (enemy instanceof UFO ufo) {
+            points = ufo.getScoreValue();
+            particles.spawnUFOExplosion(x, y);
+            game.sounds.play(SoundId.UFO_BONUS);
+        } else {
+            if (points <= 0) points = Constants.SCORE_INVADER;
+            particles.spawnEnemyExplosion(x, y);
+            game.sounds.play(SoundId.ENEMY_DEATH);
+        }
+        scoreManager.addScore(points);
     }
 
     @Override
