@@ -1,6 +1,5 @@
 package com.gorf.entities.enemies;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.gorf.Constants;
 import com.gorf.entities.Entity;
 import com.gorf.graphics.SpriteManager;
@@ -28,12 +27,8 @@ public class FlagShip extends Entity {
         this.fireCooldown = 2.0f / difficulty;
         this.fireTimer = fireCooldown;
 
-        currentAnimation = sprites.getAnimation("flagship");
-        if (currentAnimation != null) {
-            currentFrame = currentAnimation.getKeyFrame(0);
-        } else {
-            currentFrame = sprites.getFrame("flagship_1");
-        }
+        // Use single static frame (the two sprite sheet frames are mirror images, not animation)
+        currentFrame = sprites.getFrame("flagship_1");
         updateBoundsFromFrame();
     }
 
@@ -65,9 +60,7 @@ public class FlagShip extends Entity {
             }
         }
 
-        if (currentAnimation != null) {
-            currentFrame = currentAnimation.getKeyFrame(stateTime);
-        }
+        // Static frame - no animation update needed
     }
 
     public int getScoreValue() {

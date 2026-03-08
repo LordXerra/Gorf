@@ -55,13 +55,12 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
     private final BitmapFont overlayFont;
 
     private enum PlayState {
-        MISSION_INTRO, PLAYING, PLAYER_DYING, RESPAWNING, MISSION_CLEAR, GAME_OVER
+        MISSION_INTRO, PLAYING, PAUSED, PLAYER_DYING, RESPAWNING, MISSION_CLEAR, GAME_OVER
     }
 
     private PlayState state = PlayState.MISSION_INTRO;
     private float stateTimer = 0;
     private float globalTime = 0;
-    private int lastEnemyProjectileCount = 0;
 
     public GameScreen(GorfGame game) {
         this.game = game;
@@ -157,12 +156,36 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
             scoreManager.toggleInfiniteLives();
         }
 
+        // Debug: Keys 1-5 jump to specific mission
+        for (int k = Input.Keys.NUM_1; k <= Input.Keys.NUM_5; k++) {
+            if (Gdx.input.isKeyJustPressed(k)) {
+                int mission = k - Input.Keys.NUM_1; // 0-4
+                scoreManager.setCurrentMission(mission);
+                missionManager.setCurrentIndex(mission);
+                startMission();
+                return;
+            }
+        }
+
+        // Pause toggle
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            if (state == PlayState.PLAYING) {
+                state = PlayState.PAUSED;
+            } else if (state == PlayState.PAUSED) {
+                state = PlayState.PLAYING;
+            }
+        }
+
         switch (state) {
             case MISSION_INTRO:
                 if (stateTimer >= 2.5f) {
                     state = PlayState.PLAYING;
                     stateTimer = 0;
                 }
+                break;
+
+            case PAUSED:
+                // Game frozen - P to resume (handled above)
                 break;
 
             case PLAYING:
@@ -364,6 +387,11 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
                 game.font.draw(game.batch, scoreManager.getCurrentRank(),
                     cx - layout.width / 2f, cy - 50);
                 game.font.setColor(Color.WHITE);
+                break;
+
+            case PAUSED:
+                strobe.drawCentered(game.batch, overlayFont, "PAUSED",
+                    cx, cy, globalTime, 0);
                 break;
 
             case MISSION_CLEAR:

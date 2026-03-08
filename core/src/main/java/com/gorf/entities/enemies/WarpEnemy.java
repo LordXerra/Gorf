@@ -1,5 +1,7 @@
 package com.gorf.entities.enemies;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.gorf.Constants;
 import com.gorf.entities.Entity;
@@ -18,7 +20,7 @@ public class WarpEnemy extends Entity {
     private float centerX, centerY;
     private float scale;
 
-    private final com.badlogic.gdx.graphics.g2d.Animation<com.badlogic.gdx.graphics.g2d.TextureRegion> growAnim;
+    private final Animation<TextureRegion> growAnim;
 
     public WarpEnemy(SpriteManager sprites, float startAngle, float difficulty) {
         this.centerX = Constants.VIRTUAL_WIDTH / 2f;

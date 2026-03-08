@@ -1,6 +1,5 @@
 package com.gorf.audio;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -451,7 +450,7 @@ public class SoundGenerator {
         short[] data = new short[samples];
 
         // Phase accumulators for continuous waveforms
-        double phase1 = 0, phase2 = 0, phase3 = 0;
+        double phase1 = 0, phase2 = 0;
 
         for (int i = 0; i < samples; i++) {
             double t = (double) i / SAMPLE_RATE;

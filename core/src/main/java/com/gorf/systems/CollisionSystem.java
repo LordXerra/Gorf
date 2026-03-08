@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.gorf.entities.Entity;
 import com.gorf.entities.PlayerBullet;
+import com.gorf.entities.enemies.ShieldSegment;
 
 public class CollisionSystem {
     private final Rectangle r1 = new Rectangle();
@@ -34,7 +35,10 @@ public class CollisionSystem {
 
                 if (r1.overlaps(r2)) {
                     bullet.alive = false;
-                    enemy.alive = false;
+                    // ShieldSegments handle their own death via onDestroyed() (multi-hit)
+                    if (!(enemy instanceof ShieldSegment)) {
+                        enemy.alive = false;
+                    }
                     callback.onEnemyKilled(enemy, enemy.x, enemy.y, 0);
                     break;
                 }

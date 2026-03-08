@@ -1,7 +1,5 @@
 package com.gorf.entities.enemies;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.gorf.Constants;
 import com.gorf.entities.Entity;
 import com.gorf.graphics.SpriteManager;

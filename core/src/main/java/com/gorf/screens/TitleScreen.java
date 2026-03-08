@@ -35,7 +35,6 @@ public class TitleScreen extends ScreenAdapter {
     private float globalTime;
     private float blinkTimer;
     private float ambientTimer;
-    private long ambientLoopId = -1;
 
     private static final SoundId[] AMBIENT_SFX = {
         SoundId.AMBIENT_BLIP, SoundId.AMBIENT_WARBLE, SoundId.AMBIENT_ZAP,
@@ -53,7 +52,7 @@ public class TitleScreen extends ScreenAdapter {
         this.smallFont.getData().setScale(1.2f);
 
         // Start continuous ambient drone loop
-        ambientLoopId = game.sounds.loop(SoundId.TITLE_AMBIENT, 0.7f);
+        game.sounds.loop(SoundId.TITLE_AMBIENT, 0.7f);
     }
 
     @Override
@@ -200,7 +199,7 @@ public class TitleScreen extends ScreenAdapter {
             "MISSION 4: SPACE WARP - SURVIVE THE VORTEX",
             "MISSION 5: FLAG SHIP - DESTROY THE BOSS",
             "",
-            "KEYBOARD: WASD MOVE, SPACE FIRE",
+            "KEYBOARD: WASD MOVE, SPACE FIRE, P PAUSE",
             "CONTROLLER: D-PAD/STICK MOVE, CROSS FIRE",
             "",
             "ONLY ONE SHOT AT A TIME!",

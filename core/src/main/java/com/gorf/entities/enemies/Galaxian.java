@@ -1,5 +1,7 @@
 package com.gorf.entities.enemies;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.gorf.Constants;
@@ -41,8 +43,8 @@ public class Galaxian extends Entity {
     private float targetX, targetY;
     private FireCallback fireCallback;
 
-    private final com.badlogic.gdx.graphics.g2d.Animation<com.badlogic.gdx.graphics.g2d.TextureRegion> normalAnim;
-    private final com.badlogic.gdx.graphics.g2d.Animation<com.badlogic.gdx.graphics.g2d.TextureRegion> diveAnim;
+    private final Animation<TextureRegion> normalAnim;
+    private final Animation<TextureRegion> diveAnim;
 
     public interface FireCallback {
         void onFire(float x, float y, float targetX, float targetY);

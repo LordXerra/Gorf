@@ -69,6 +69,7 @@ public class ScoreManager {
     public int getScore() { return score; }
     public int getLives() { return lives; }
     public int getCurrentMission() { return currentMission; }
+    public void setCurrentMission(int mission) { this.currentMission = mission; }
     public int getCycleCount() { return cycleCount; }
 
     public String getCurrentRank() {

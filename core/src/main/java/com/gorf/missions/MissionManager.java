@@ -56,6 +56,10 @@ public class MissionManager {
         return currentIndex + 1;
     }
 
+    public void setCurrentIndex(int index) {
+        currentIndex = index;
+    }
+
     public void reset() {
         currentIndex = 0;
     }

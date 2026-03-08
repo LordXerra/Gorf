@@ -1,7 +1,5 @@
 package com.gorf.missions;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.gorf.Constants;
 import com.gorf.entities.Entity;
 import com.gorf.entities.EnemyBullet;
@@ -52,14 +50,14 @@ public class FlagShipMission extends Mission {
         });
         em.enemies.add(flagShip);
 
-        // Create shield segments as a barrier below the flagship
-        float shieldSpacing = 22f;
+        // Create shield segments as a colored barrier below the flagship
+        float shieldSpacing = 19f;
         float shieldStartOffset = -(NUM_SHIELDS - 1) / 2f * shieldSpacing;
-        float shieldYOffset = -50f; // positioned below the flagship
+        float shieldYOffset = -40f; // positioned below the flagship
 
         for (int i = 0; i < NUM_SHIELDS; i++) {
             float offset = shieldStartOffset + i * shieldSpacing;
-            shields[i] = new ShieldSegment(sprites, i, offset, shieldYOffset);
+            shields[i] = new ShieldSegment(i, offset, shieldYOffset);
             shields[i].setDebrisCallback((debX, debY) -> {
                 Debris debris = new Debris(sprites, debX, debY);
                 em.enemies.add(debris);
@@ -137,10 +135,13 @@ public class FlagShipMission extends Mission {
         // Complete when reactor core is destroyed
         // The flagship itself is not directly destroyable - must hit the core
         if (reactorCore != null && !reactorCore.alive) {
-            // Also mark flagship as dead for scoring
-            if (flagShip.alive) {
-                flagShip.alive = false;
+            // Kill everything - wave is over
+            if (flagShip.alive) flagShip.alive = false;
+            for (ShieldSegment s : shields) {
+                if (s != null) s.alive = false;
             }
+            if (leftEscort != null) leftEscort.alive = false;
+            if (rightEscort != null) rightEscort.alive = false;
             return true;
         }
         return false;

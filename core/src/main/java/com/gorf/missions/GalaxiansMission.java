@@ -1,6 +1,5 @@
 package com.gorf.missions;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.gorf.Constants;
 import com.gorf.entities.Entity;
@@ -12,8 +11,8 @@ import com.gorf.systems.EntityManager;
 
 /**
  * Mission 3: Galaxians.
- * 24 enemies in formation (4 rows x 6 cols).
- * Color hierarchy: yellow (bottom), blue, red, flagship/white (top).
+ * Enemies in formation (3 rows x 5 cols).
+ * Color hierarchy: blue (bottom), red, flagship/white (top).
  * Enemies dive at player along Bezier curves.
  */
 public class GalaxiansMission extends Mission {
@@ -30,10 +29,6 @@ public class GalaxiansMission extends Mission {
     private float playerX, playerY;
     private SpriteManager sprites;
 
-    // Track base positions for formation updates
-    private float[][] baseX;
-    private float[][] baseY;
-
     @Override
     public void init(EntityManager em, SpriteManager sprites, float difficulty) {
         this.difficulty = difficulty;
@@ -44,9 +39,6 @@ public class GalaxiansMission extends Mission {
         formationSpeed = 35f * difficulty;
         playerX = Constants.VIRTUAL_WIDTH / 2f;
         playerY = 60f;
-
-        baseX = new float[ROWS][COLS];
-        baseY = new float[ROWS][COLS];
 
         float startX = Constants.VIRTUAL_WIDTH / 2f - (COLS - 1) * COL_SPACING / 2f;
         float topY = Constants.VIRTUAL_HEIGHT - 100;
@@ -69,9 +61,6 @@ public class GalaxiansMission extends Mission {
             for (int col = colStart; col < colEnd; col++) {
                 float gx = startX + col * COL_SPACING;
                 float gy = topY - row * ROW_SPACING;
-
-                baseX[row][col] = gx;
-                baseY[row][col] = gy;
 
                 Galaxian g = new Galaxian(sprites, color, gx, gy, difficulty);
                 g.setPlayerTarget(playerX, playerY);

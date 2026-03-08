@@ -18,7 +18,6 @@ public class DiveBomber extends Entity {
     private float diveSpeed;
     private float diveTimer;
     private float diveCooldown;
-    private float difficulty;
     private FireCallback fireCallback;
 
     public interface FireCallback {
@@ -30,7 +29,6 @@ public class DiveBomber extends Entity {
         this.formationY = formY;
         this.x = formX;
         this.y = formY;
-        this.difficulty = difficulty;
         this.diveSpeed = 200f * difficulty;
         this.diveCooldown = MathUtils.random(3f, 7f) / difficulty;
         this.diveTimer = MathUtils.random(1f, diveCooldown);
