@@ -19,8 +19,10 @@ import com.gorf.entities.enemies.UFO;
 import com.gorf.entities.enemies.DiveBomber;
 import com.gorf.entities.enemies.LaserCannon;
 import com.gorf.entities.enemies.MiniRobot;
+import com.gorf.entities.enemies.Galaxian;
 import com.gorf.missions.AstroBattlesMission;
 import com.gorf.missions.LaserAttackMission;
+import com.gorf.missions.GalaxiansMission;
 import com.gorf.graphics.HudRenderer;
 import com.gorf.graphics.StarBackground;
 import com.gorf.graphics.StrobingText;
@@ -70,7 +72,8 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
         // Register missions
         missionManager.setMission(0, new AstroBattlesMission());
         missionManager.setMission(1, new LaserAttackMission());
-        // Missions 2-4 will be added in Phases 5-7
+        missionManager.setMission(2, new GalaxiansMission());
+        // Missions 3-4 will be added in Phases 6-7
 
         game.sounds.playPriority(SoundId.GAME_START);
         startMission();
@@ -254,6 +257,16 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
         } else if (enemy instanceof MiniRobot mr) {
             points = mr.getScoreValue();
             particles.spawnEnemyExplosion(x, y);
+            game.sounds.play(SoundId.ENEMY_DEATH);
+        } else if (enemy instanceof Galaxian gal) {
+            points = gal.getScoreValue();
+            String galColor = switch (gal.getGalaxianColor()) {
+                case YELLOW -> "yellow";
+                case BLUE -> "blue";
+                case RED -> "red";
+                case FLAGSHIP -> "white";
+            };
+            particles.spawnGalaxianExplosion(x, y, galColor);
             game.sounds.play(SoundId.ENEMY_DEATH);
         } else {
             if (points <= 0) points = Constants.SCORE_INVADER;

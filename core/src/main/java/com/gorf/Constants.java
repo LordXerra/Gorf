@@ -2,7 +2,7 @@ package com.gorf;
 
 public class Constants {
     // Version
-    public static final String VERSION = "V0.04";
+    public static final String VERSION = "V0.05";
 
     // Window
     public static final int WINDOW_WIDTH = 1024;
