@@ -16,7 +16,11 @@ import com.gorf.entities.Entity;
 import com.gorf.entities.enemies.GorfianRobot;
 import com.gorf.entities.enemies.Invader;
 import com.gorf.entities.enemies.UFO;
+import com.gorf.entities.enemies.DiveBomber;
+import com.gorf.entities.enemies.LaserCannon;
+import com.gorf.entities.enemies.MiniRobot;
 import com.gorf.missions.AstroBattlesMission;
+import com.gorf.missions.LaserAttackMission;
 import com.gorf.graphics.HudRenderer;
 import com.gorf.graphics.StarBackground;
 import com.gorf.graphics.StrobingText;
@@ -65,7 +69,8 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
 
         // Register missions
         missionManager.setMission(0, new AstroBattlesMission());
-        // Missions 1-4 will be added in Phases 4-7
+        missionManager.setMission(1, new LaserAttackMission());
+        // Missions 2-4 will be added in Phases 5-7
 
         game.sounds.playPriority(SoundId.GAME_START);
         startMission();
@@ -238,6 +243,18 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
             points = ufo.getScoreValue();
             particles.spawnUFOExplosion(x, y);
             game.sounds.play(SoundId.UFO_BONUS);
+        } else if (enemy instanceof DiveBomber db) {
+            points = db.getScoreValue();
+            particles.spawnEnemyExplosion(x, y);
+            game.sounds.play(SoundId.ENEMY_DEATH);
+        } else if (enemy instanceof LaserCannon lc) {
+            points = lc.getScoreValue();
+            particles.spawnEnemyExplosion(x, y);
+            game.sounds.play(SoundId.ENEMY_DEATH);
+        } else if (enemy instanceof MiniRobot mr) {
+            points = mr.getScoreValue();
+            particles.spawnEnemyExplosion(x, y);
+            game.sounds.play(SoundId.ENEMY_DEATH);
         } else {
             if (points <= 0) points = Constants.SCORE_INVADER;
             particles.spawnEnemyExplosion(x, y);
