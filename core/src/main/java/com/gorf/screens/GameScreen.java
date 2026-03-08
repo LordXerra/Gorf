@@ -21,10 +21,16 @@ import com.gorf.entities.enemies.LaserCannon;
 import com.gorf.entities.enemies.MiniRobot;
 import com.gorf.entities.enemies.Galaxian;
 import com.gorf.entities.enemies.WarpEnemy;
+import com.gorf.entities.enemies.FlagShip;
+import com.gorf.entities.enemies.ShieldSegment;
+import com.gorf.entities.enemies.Escort;
+import com.gorf.entities.enemies.Debris;
+import com.gorf.entities.enemies.ReactorCore;
 import com.gorf.missions.AstroBattlesMission;
 import com.gorf.missions.LaserAttackMission;
 import com.gorf.missions.GalaxiansMission;
 import com.gorf.missions.SpaceWarpMission;
+import com.gorf.missions.FlagShipMission;
 import com.gorf.graphics.HudRenderer;
 import com.gorf.graphics.StarBackground;
 import com.gorf.graphics.StrobingText;
@@ -76,7 +82,7 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
         missionManager.setMission(1, new LaserAttackMission());
         missionManager.setMission(2, new GalaxiansMission());
         missionManager.setMission(3, new SpaceWarpMission());
-        // Mission 4 will be added in Phase 7
+        missionManager.setMission(4, new FlagShipMission());
 
         game.sounds.playPriority(SoundId.GAME_START);
         startMission();
@@ -275,6 +281,27 @@ public class GameScreen extends ScreenAdapter implements CollisionSystem.Collisi
             points = we.getScoreValue();
             particles.spawnWarpExplosion(x, y);
             game.sounds.play(SoundId.WARP_ENEMY);
+        } else if (enemy instanceof ReactorCore rc) {
+            points = rc.getScoreValue();
+            particles.spawnFlagshipExplosion(x, y);
+            game.sounds.playPriority(SoundId.FLAGSHIP_DESTROY);
+        } else if (enemy instanceof ShieldSegment ss) {
+            points = ss.getScoreValue();
+            ss.onDestroyed();
+            particles.spawnShieldExplosion(x, y);
+            game.sounds.play(SoundId.FLAGSHIP_HIT);
+        } else if (enemy instanceof FlagShip fs) {
+            points = fs.getScoreValue();
+            particles.spawnFlagshipExplosion(x, y);
+            game.sounds.playPriority(SoundId.FLAGSHIP_DESTROY);
+        } else if (enemy instanceof Escort esc) {
+            points = esc.getScoreValue();
+            particles.spawnEnemyExplosion(x, y);
+            game.sounds.play(SoundId.ENEMY_DEATH);
+        } else if (enemy instanceof Debris deb) {
+            points = deb.getScoreValue();
+            particles.spawnSmallExplosion(x, y);
+            game.sounds.play(SoundId.DEBRIS_HIT);
         } else {
             if (points <= 0) points = Constants.SCORE_INVADER;
             particles.spawnEnemyExplosion(x, y);
