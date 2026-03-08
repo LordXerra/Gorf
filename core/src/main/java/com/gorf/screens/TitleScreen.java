@@ -71,8 +71,8 @@ public class TitleScreen extends ScreenAdapter {
 
         // Start game
         if (game.inputManager.isStartJustPressed() || game.inputManager.isFireJustPressed()) {
-            // TODO: Transition to GameScreen once implemented
-            // game.setScreen(new GameScreen(game));
+            game.setScreen(new GameScreen(game));
+            return;
         }
 
         // Update stars
